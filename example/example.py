@@ -1,10 +1,12 @@
 import numpy as np
-from q.dqn import Dqn
 import torch
 import random
 
+from dqn_experience import Dqn
+from dqn_experience import CustomModel
+
 def main():
-    dqn = Dqn(state_dim=4, action_dim=2, replay_buffer_size=1000, batch_size=4)
+    dqn = Dqn(create_model=lambda: CustomModel(state_dim=4, action_dim=2))
 
     t_s = [
         [
