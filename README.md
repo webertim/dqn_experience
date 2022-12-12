@@ -10,3 +10,9 @@ Since this is a private project and not meant for the public, the code is not th
 ## Usage
 
 An example is provided [here](example/example.py), which converges to the optimal q values for the described scenario.
+
+## Installation
+
+```bash
+pip install git+https://github.com/webertim/dqn_experience.git@master
+```
