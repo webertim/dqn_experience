@@ -1,15 +1,14 @@
 import numpy as np
-import torch
-from collections import deque
-from q.model import CustomModel
-from torch.utils.data import Dataset
-from torch import Tensor
 import torch.nn as nn
+import torch
+
+from collections import deque
+from dqn_experience.model import CustomModel
 
 class Dqn:
-    def __init__(self, state_dim: int = 8, action_dim: int = 5, replay_buffer_size: int = 1000, batch_size: int = 16, gamma: float = 0.99, loss:nn.modules.loss._Loss = nn.MSELoss(), target_update_interval: int = 100, lr: float = 1e-2) -> None:
-        self.q_main = CustomModel(state_dim=state_dim, action_dim=action_dim)
-        self.q_target = CustomModel(state_dim=state_dim, action_dim=action_dim)
+    def __init__(self, replay_buffer_size: int = 1000, batch_size: int = 16, gamma: float = 0.99, loss:nn.modules.loss._Loss = nn.MSELoss(), target_update_interval: int = 100, lr: float = 1e-4, create_model = lambda: CustomModel(state_dim=16, action_dim=4)) -> None:
+        self.q_main = create_model()
+        self.q_target = create_model()
         self.replay_buffer = deque(maxlen=replay_buffer_size)
         self.batch_size = batch_size
         self.gamma = gamma
@@ -43,7 +42,6 @@ class Dqn:
         q_all_actions_current = self.q_main(torch.from_numpy(batched_states).float())
         q_current = q_all_actions_current[np.arange(self.batch_size), batched_actions]
 
-        # Get max q for each row
         q_max_next_state = q_all_actions_next_state[np.arange(self.batch_size), q_all_actions_current.argmax(axis=1)]
         y = batched_rewards + self.gamma * q_max_next_state * done_mask
 

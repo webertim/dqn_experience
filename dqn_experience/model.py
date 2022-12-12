@@ -2,7 +2,7 @@ from torch import nn
 
 class CustomModel(nn.Module):
 
-    def __init__(self, state_dim: int = 8, action_dim: int = 5) -> None:
+    def __init__(self, state_dim: int, action_dim: int) -> None:
         super().__init__()
         self.l1 = nn.Linear(state_dim, 128)
         self.l2 = nn.Linear(128, 64)
