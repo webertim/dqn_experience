@@ -7,14 +7,14 @@ from torch import Tensor
 import torch.nn as nn
 
 class Dqn:
-    def __init__(self, state_dim: int = 8, action_dim: int = 5, replay_buffer_size: int = 1000, batch_size: int = 16, gamma: float = 0.99, loss:nn.modules.loss._Loss = nn.MSELoss(), target_update_interval: int = 100) -> None:
+    def __init__(self, state_dim: int = 8, action_dim: int = 5, replay_buffer_size: int = 1000, batch_size: int = 16, gamma: float = 0.99, loss:nn.modules.loss._Loss = nn.MSELoss(), target_update_interval: int = 100, lr: float = 1e-2) -> None:
         self.q_main = CustomModel(state_dim=state_dim, action_dim=action_dim)
         self.q_target = CustomModel(state_dim=state_dim, action_dim=action_dim)
         self.replay_buffer = deque(maxlen=replay_buffer_size)
         self.batch_size = batch_size
         self.gamma = gamma
         self.loss = loss
-        self.optimizer = torch.optim.Adam(self.q_main.parameters(), lr= 1e-2)
+        self.optimizer = torch.optim.Adam(self.q_main.parameters(), lr=lr)
         self.target_update_interval = target_update_interval
         self.i = 0
 
