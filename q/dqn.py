@@ -34,19 +34,18 @@ class Dqn:
         batched_rewards = np.stack(batch[:, 2])
         batched_next_states = np.stack(batch[:, 3])
 
-        q_all_actions_next_state = self.q_target(torch.from_numpy(batched_next_states).float()).detach().numpy()
-        # Get max q for each row
-        q_max_next_state = q_all_actions_next_state.max(axis=1)
- 
+        q_all_actions_next_state = self.q_target(torch.from_numpy(batched_next_states).float()).detach().numpy() 
 
         done_mask = (batch[:, 4].astype(float) * -1) + 1
 
-        y = batched_rewards + self.gamma * q_max_next_state * done_mask
-
         self.optimizer.zero_grad()
+
         q_all_actions_current = self.q_main(torch.from_numpy(batched_states).float())
-        # Get q value for actual selected action (batched_actions)
         q_current = q_all_actions_current[np.arange(self.batch_size), batched_actions]
+
+        # Get max q for each row
+        q_max_next_state = q_all_actions_next_state[np.arange(self.batch_size), q_all_actions_current.argmax(axis=1)]
+        y = batched_rewards + self.gamma * q_max_next_state * done_mask
 
         loss = self.loss(q_current, torch.from_numpy(y).float())
         loss.backward()
